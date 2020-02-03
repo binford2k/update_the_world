@@ -1,0 +1,1804 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <title>Porting the whole world to a new API</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"/>
+
+  
+
+  <link rel="stylesheet" type="text/css" href="css/highlight/default.css"  />
+  <link rel="stylesheet" type="text/css" href="css/mermaid-6.0.0.css" />
+  <link rel="stylesheet" type="text/css" href="css/font-awesome-5.6.1/css/all.min.css">
+  <link rel="stylesheet" type="text/css" href="css/introjs-2.5.local.css">
+  <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.12.1.css">
+  <link rel="stylesheet" type="text/css" href="css/showoff.css?v=0.20.1" />
+  <link rel="stylesheet" type="text/css" href="css/zoomline-0.0.1.css">
+
+  <script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
+  <script type="text/javascript" src="js/jquery-ui-1.12.1.js"></script>
+
+  <script type="text/javascript" src="js/jquery.cycle.all-2.8.0.js"></script>
+  <script type="text/javascript" src="js/jquery.batchImageLoad-1.0.0.js"></script>
+  <script type="text/javascript" src="js/jquery.parsequery.min-6a20f83.js"></script>
+  <script type="text/javascript" src="js/jquery.doubletap-4ff02c5.js"></script>
+  <script type="text/javascript" src="js/highlight.pack-9.2.0.js"></script>
+  <script type="text/javascript" src="js/highlightjs-line-numbers.min.js"></script>
+  <script type="text/javascript" src="js/jTypeWriter-1.1.js"></script>
+  <script type="text/javascript" src="js/bigtext-0.1.8.js"></script>
+  <script type="text/javascript" src="js/zoomline-0.0.1.js"></script>
+  <script type="text/javascript" src="js/simpleStrings-0.0.1.js"></script>
+  <script type="text/javascript" src="js/mermaid-6.0.0-min.js"></script>
+
+  <!-- waiting on https://github.com/usablica/intro.js/pull/727 -->
+  <script type="text/javascript" src="js/intro-2.5.local.js"></script>
+
+  <script type="text/javascript" src="js/coffee-script-1.1.3-pre.js"></script>
+
+  <script type="text/javascript" src="js/annotations.js?v=0.20.1"></script>
+  <script type="text/javascript" src="js/showoff.js?v=0.20.1"></script>
+
+  
+    <link rel="stylesheet" type="text/css" href="file/jquery.countdown.css" />
+  
+    <link rel="stylesheet" type="text/css" href="file/styles.css" />
+  
+
+  
+    <script type="text/javascript" src="file/01_moment.js"></script>
+  
+    <script type="text/javascript" src="file/02_jquery.plugin.min.js"></script>
+  
+    <script type="text/javascript" src="file/03_jquery.countdown.min.js"></script>
+  
+    <script type="text/javascript" src="file/scripts.js"></script>
+  
+
+  <script type="text/javascript">
+    $(function(){
+      setupPreso(false);
+    });
+
+    editUrl     = "";
+    interactive = false;
+    master      = false;
+    presenter   = false;
+
+    keymap               = {
+  "d": "DEBUG",
+  "space": "NEXT",
+  "down": "NEXT",
+  "right": "NEXT",
+  "pagedown": "NEXT",
+  "up": "PREV",
+  "left": "PREV",
+  "pageup": "PREV",
+  "SPACE": "NEXTSEC",
+  "DOWN": "NEXTSEC",
+  "RIGHT": "NEXTSEC",
+  "PAGEDOWN": "NEXTSEC",
+  "UP": "PREVSEC",
+  "LEFT": "PREVSEC",
+  "PAGEUP": "PREVSEC",
+  "R": "RELOAD",
+  "r": "REFRESH",
+  "c": "CONTENTS",
+  "t": "CONTENTS",
+  "h": "HELP",
+  "/": "HELP",
+  "?": "HELP",
+  "b": "BLANK",
+  ".": "BLANK",
+  "F": "FOOTER",
+  "f": "FOLLOW",
+  "n": "NOTES",
+  "esc": "CLEAR",
+  "p": "PAUSE",
+  "P": "PRESHOW",
+  "x": "EXECUTE",
+  "f5": "EXECUTE"
+};
+    keycode_dictionary   = {
+  "0": "\\",
+  "8": "backspace",
+  "9": "tab",
+  "12": "num",
+  "13": "enter",
+  "16": "shift",
+  "17": "ctrl",
+  "18": "alt",
+  "19": "pause",
+  "20": "caps",
+  "27": "esc",
+  "32": "space",
+  "33": "pageup",
+  "34": "pagedown",
+  "35": "end",
+  "36": "home",
+  "37": "left",
+  "38": "up",
+  "39": "right",
+  "40": "down",
+  "44": "print",
+  "45": "insert",
+  "46": "delete",
+  "48": "0",
+  "49": "1",
+  "50": "2",
+  "51": "3",
+  "52": "4",
+  "53": "5",
+  "54": "6",
+  "55": "7",
+  "56": "8",
+  "57": "9",
+  "59": ";",
+  "61": "=",
+  "65": "a",
+  "66": "b",
+  "67": "c",
+  "68": "d",
+  "69": "e",
+  "70": "f",
+  "71": "g",
+  "72": "h",
+  "73": "i",
+  "74": "j",
+  "75": "k",
+  "76": "l",
+  "77": "m",
+  "78": "n",
+  "79": "o",
+  "80": "p",
+  "81": "q",
+  "82": "r",
+  "83": "s",
+  "84": "t",
+  "85": "u",
+  "86": "v",
+  "87": "w",
+  "88": "x",
+  "89": "y",
+  "90": "z",
+  "91": "cmd",
+  "92": "cmd",
+  "93": "cmd",
+  "96": "num_0",
+  "97": "num_1",
+  "98": "num_2",
+  "99": "num_3",
+  "100": "num_4",
+  "101": "num_5",
+  "102": "num_6",
+  "103": "num_7",
+  "104": "num_8",
+  "105": "num_9",
+  "106": "num_multiply",
+  "107": "num_add",
+  "108": "num_enter",
+  "109": "num_subtract",
+  "110": "num_decimal",
+  "111": "num_divide",
+  "112": "f1",
+  "113": "f2",
+  "114": "f3",
+  "115": "f4",
+  "116": "f5",
+  "117": "f6",
+  "118": "f7",
+  "119": "f8",
+  "120": "f9",
+  "121": "f10",
+  "122": "f11",
+  "123": "f12",
+  "124": "print",
+  "144": "num",
+  "145": "scroll",
+  "173": "-",
+  "186": ";",
+  "187": "=",
+  "188": ",",
+  "189": "-",
+  "190": ".",
+  "191": "/",
+  "192": "`",
+  "219": "[",
+  "220": "\\",
+  "221": "]",
+  "222": "'",
+  "223": "`",
+  "224": "cmd",
+  "225": "alt",
+  "57392": "ctrl",
+  "63289": "num"
+};
+    keycode_shifted_keys = {
+  "0": ")",
+  "1": "!",
+  "2": "@",
+  "3": "#",
+  "4": "$",
+  "5": "%",
+  "6": "^",
+  "7": "&",
+  "8": "*",
+  "9": "(",
+  "/": "?",
+  ".": ">",
+  ",": "<",
+  "'": "\"",
+  ";": ":",
+  "[": "{",
+  "]": "}",
+  "\\": "|",
+  "`": "~",
+  "=": "+",
+  "-": "_",
+  "space": "SPACE",
+  "down": "DOWN",
+  "right": "RIGHT",
+  "pagedown": "PAGEDOWN",
+  "up": "UP",
+  "left": "LEFT",
+  "pageup": "PAGEUP"
+};
+    user_translations    = {
+};
+
+    I18n = new translation({"name":"Showoff Presentation","menu":{"title":"Showoff Menu","table_of_contents":"Table of Contents","downloads":"Downloads","feedback":{"label":"Send Feedback","description":"This slide is...","worst":"Terrible","best":"Awesome","why":"Why...?","send":"Send"},"pace":{"label":"The presenter should...","slower":"Slow Down","faster":"Speed Up"},"question":{"label":"Ask a Question","placeholder":"Ask a question..."},"edit":"Edit Current Slide","clear_annotations":"Clear Annotations","language":"Content Language","close":"Close","help":"Press <code>?</code> for help.","anonymous":"All features are anonymous.","sending":"Sending..."},"navigation":{"next":"Next","previous":"Previous","sync":"Sync Presentation"},"loading":"loading presentation...","activity_complete":"Activity complete","follow":{"label":"Follow Mode:"},"refresh":"Are you sure you want to refresh the slide content?\n\n(Use `RELOAD` to fully reload the entire UI)","reload":"Are you sure you want to reload Showoff?","preshow":{"prompt":"Minutes from now to start?","resume":"Resuming in:"},"tour":{"show":"See the Tour","reset":"Reset Hints","welcome":"<h3>Welcome to Showoff</h3>Let me show you around. After you finish this tour, it won't show again.","displayview":"Start by clicking this button to open the Display Window; then drag it onto the projector.","annotations":"Draw on your slides everywhere the presentation is displayed.","timer":"Set a countdown timer to help you stay on pace.","pace":"Audience members can use this to tell you if you're moving too quickly. Try to keep the indicator centered.","questions":"Questions asked by audience members are displayed here. You'll also see a count indicator on the Display Window when you have questions to answer.","notes":"Configure the notes display by zooming text, resizing the pane, or even popping it out into a new window.","slidesource":"The name of the slide is displayed here.","settings":"Would you like a different presenter layout? Choose that and other settings here.","edit":"This button will open your web-based editor--usually something like GitHub.","report":"Don't forget to report issues when you see them.","activity":{"count":"This will count down as audience members mark their activity complete. Their presentations will pause until completed.","complete":"Check this box when you're ready to move on. The presentation will pause while you're working."},"form":{"responses":"As questions are answered, they'll show up as a bar chart with the number of answers to each question on the right.","display":"Press this button to present a snapshot of the live responses on slide.","save":"Press this button to save your responses. The presentation will pause while answering."},"menu":{"start":"Click here to open the menu.","navigation":"Quickly navigate to any slide.","download":"Download presentation support files.","pace":"Provide pace feedback.","questions":"Ask live questions of the presenter.","feedback":"Provide suggestions for improving the content."}},"downloads":{"title":"File Downloads"},"help":{"title":"Help","next":"Move to the next slide.","prev":"Move to the previous slide.","nextsec":"Move to the next section.","prevsec":"Move to the previous section.","contents":"Show the table of contents menu.","follow":"Toggle follow mode.","help":"Show this help dialog.","refresh":"Refresh slide content.","reload":"Completely reload Showoff.","blank":"Blank the screen.","footer":"Toggle the display footer.","notes":"Toggle notes display.","clear":"Clear code execution results.","pause":"Pause the presentation.","preshow":"Display slideshow of <tt>preshow</tt> images on a timer.","execute":"Execute the first visible code block.","debug":"Show debugging information.","close":"Close"},"stats":{"title":"Viewing Statistics","stray":"of your audience is not viewing the same slide you are.","idle":"of your audience is idle.","current":"Slides currently being viewed","elapsed":"Elapsed time spent on each slide","nodata":"No data to display.","allcurrent":"All audience members are viewing the presenter's slide."},"forms":{"display":"Display Results","save":"Save"},"presenter":{"topbar":{"annotations":"Annotations","edit":"Edit Slide","report":"Report Issue With Slide","stats":"Viewing Statistics","downloads":"Downloads","display":"Display Window","print":"Print Slides","settings":"Settings","newpage":"Open in a new page...","tooltip":{"annotations":"Enable the annotations subsystem.","edit":"Edit current slide in new window.","report":"Report an issue with the current slide.","stats":"See the slides your audience is interacting with.","downloads":"Open the file downloads in a menu or new page.","display":"Enable the Display Window; you should put this on the projector.","print":"Print slides using a new window.","settings":"Open the Settings dialog."}},"preview":{"next":"Next","previous":"Previous"},"mobile":{"update":"Update"},"notes":{"label":"Showoff Notes","personal":"Personal Notes"},"timer":{"label":"Timer:","start":"Start","pause":"Pause","resume":"Resume","cancel":"Cancel","unit":"minutes"},"pace":{"faster":"Speed Up!","slower":"Slow Down!"},"questions":"Audience Questions","annotation":{"tools":"Tools","lines":"Lines","shapes":"Shapes"},"status":{"label":"Slides:"},"settings":{"label":"Settings","close":"Close","follower":{"label":"Update Follower","tooltip":"Send slide change notifications.","description":"When this is enabled, the Showoff server will track your slide changes. Disable it to observe the presentation without inadvertently causing slide changes."},"remote":{"label":"Enable Remote","tooltip":"Enables tracking of other presenters.","description":"When this is enabled, you can load the presenter in another browser (typically on your mobile phone) to control the presentation."},"layout":{"label":"Layout","default":"Default Layout","thumbs":"Display thumbnail previews of the next and previous slides.","beside":"Display the next slide as a large preview in the main presenter view.","floating":"Open the next slide as a floating window.","confirmation":"Browser security requires confirmation before opening a new window.","open":"Open Window","cancel":"cancel","reset":{"label":"Clear Showoff settings.","tooltip":"Reset Showoff UI settings to default values."}},"language":{"label":"Content Language","tooltip":"Select from available translations, or autoselect based on your browser settings.","description":"This presentation is available in different languages. Choose the language you would like to view or leave it at <tt>automatic</tt> to use your browser settings."}},"print":{"label":"Choose type of printed notes","description":"Select the content you'd like to show under the slides.","none":"Don't include notes","notes":"Presenter Notes","handouts":"Audience Handouts"}},"language":{"auto":"Automatic","disable":"Disable Translations"},"error":{"file_not_found":"File Not Found!"}});
+
+  </script>
+
+</head>
+
+<body>
+<div id="questionsIndicator"></div>
+
+<i id="hamburger" class="fa fa-bars fa-2x"></i>
+<div id="sidebarWrapper">
+    <div id="navigationHover"></div>
+    <div id="feedbackSidebar" class="sideMenu">
+    <img id="disconnected" src="css/disconnected.png">
+    <h3>Showoff Menu</h3>
+    <div id="navToggle" class="buttonWrapper"><i class=" fa fa-bookmark"></i> Table of Contents</div>
+    <div id="navigation" class="submenu"></div>
+    
+    <hr>
+
+    
+
+    
+
+    <div id="closeMenu" class="buttonWrapper"><i class="fa fa-close"></i> Close</div>
+    <hr>
+
+    <small>
+        <p>Press <code>?</code> for help.</p>
+        <p>All features are anonymous.</p>
+    </small>
+    </div>
+    <div id="sidebarExit"></div>
+</div>
+<div id="help-modal" title="Help">
+  <div id="help">
+    <div>
+      <span class="description">Move to the next slide.</span>
+      <span class="action">NEXT</span>
+      <span class="hotkeys"><span class="key">space</span><span class="key">down</span><span class="key">right</span><span class="key">pagedown</span></span>
+    </div>
+    <div>
+      <span class="description">Move to the previous slide.</span>
+      <span class="action">PREV</span>
+      <span class="hotkeys"><span class="key">up</span><span class="key">left</span><span class="key">pageup</span></span>
+    </div>
+    <div>
+      <span class="description">Move to the next section.</span>
+      <span class="action">NEXTSEC</span>
+      <span class="hotkeys"><span class="key">SPACE</span><span class="key">DOWN</span><span class="key">RIGHT</span><span class="key">PAGEDOWN</span></span>
+    </div>
+    <div>
+      <span class="description">Move to the previous section.</span>
+      <span class="action">PREVSEC</span>
+      <span class="hotkeys"><span class="key">UP</span><span class="key">LEFT</span><span class="key">PAGEUP</span></span>
+    </div>
+    <div>
+      <span class="description">Show the table of contents menu.</span>
+      <span class="action">CONTENTS</span>
+      <span class="hotkeys"><span class="key">c</span><span class="key">t</span></span>
+    </div>
+    <div>
+      <span class="description">Toggle follow mode.</span>
+      <span class="action">FOLLOW</span>
+      <span class="hotkeys"><span class="key">f</span></span>
+    </div>
+    <div>
+      <span class="description">Show this help dialog.</span>
+      <span class="action">HELP</span>
+      <span class="hotkeys"><span class="key">h</span><span class="key">/</span><span class="key">?</span></span>
+    </div>
+
+    <hr />
+
+    <div>
+      <span class="description">Refresh slide content.</span>
+      <span class="action">REFRESH</span>
+      <span class="hotkeys"><span class="key">r</span></span>
+    </div>
+    <div>
+      <span class="description">Completely reload Showoff.</span>
+      <span class="action">RELOAD</span>
+      <span class="hotkeys"><span class="key">R</span></span>
+    </div>
+    <div>
+      <span class="description">Blank the screen.</span>
+      <span class="action">BLANK</span>
+      <span class="hotkeys"><span class="key">b</span><span class="key">.</span></span>
+    </div>
+    <div>
+      <span class="description">Toggle the display footer.</span>
+      <span class="action">FOOTER</span>
+      <span class="hotkeys"><span class="key">F</span></span>
+    </div>
+    <div>
+      <span class="description">Toggle notes display.</span>
+      <span class="action">NOTES</span>
+      <span class="hotkeys"><span class="key">n</span></span>
+    </div>
+    <div>
+      <span class="description">Clear code execution results.</span>
+      <span class="action">CLEAR</span>
+      <span class="hotkeys"><span class="key">esc</span></span>
+    </div>
+    <div>
+      <span class="description">Pause the presentation.</span>
+      <span class="action">PAUSE</span>
+      <span class="hotkeys"><span class="key">p</span></span>
+    </div>
+    <div>
+      <span class="description">Display slideshow of <tt>preshow</tt> images on a timer.</span>
+      <span class="action">PRESHOW</span>
+      <span class="hotkeys"><span class="key">P</span></span>
+    </div>
+    <div>
+      <span class="description">Execute the first visible code block.</span>
+      <span class="action">EXECUTE</span>
+      <span class="hotkeys"><span class="key">x</span><span class="key">f5</span></span>
+    </div>
+
+    <hr />
+
+    <div>
+      <span class="description">Show debugging information.</span>
+      <span class="action">DEBUG</span>
+      <span class="hotkeys"><span class="key">d</span></span>
+    </div>
+  </div>
+</div>
+
+<div id="preso"><center>loading presentation...</center></div>
+<a id="synchronize"><i class="fa fa-link" aria-hidden="true" href="#"></i> Sync Presentation</a>
+<div id="notes"></div>
+
+<footer id="footer">
+  <span id="followLabel" class="container">Follow Mode: <i id="followMode" class="fa fa-ban" aria-hidden="true"></i></span>
+  <span id="slideInfo" class="container"></span>
+  <span id="debugInfo" class="container"></span>
+  <span id="notesInfo" class="container"></span>
+  <span id="slideFilename" class="container"></span>
+  <img id="disconnected" src="css/disconnected.png" />
+</footer>
+
+<div id="slides" class="offscreen" style="display:none;">
+<div data-section="slides" data-title="overview" id="slides_overview" class="slide huge" data-transition="none">
+<div class="content huge" ref="slides/overview">
+<h1>Updating the whole world to a new API</h1>
+
+<h2>otherwise known as <em>"eh. I'll get to it"</em>
+</h2>
+
+<h3>🤷‍♀️</h3>
+
+<div id="original" class="python-27-clock"></div>
+
+<div class="guido-button-block">
+    <button class="js-guido-mode guido-button">Enable Guido Mode</button>
+</div>
+
+<script>
+    $(document).ready(function () {
+        var death = moment("20200101", "YYYYMMDD").utc().toDate();
+        $('.python-27-clock#original').countdown({
+            until: death,
+            format: 'YODHMS'
+        });
+        $('.js-guido-mode').on('click', function () {
+            $('.python-27-clock').css({
+                "font-family": "'Electrolize', sans-serif",
+                "background-color": "black",
+                "color": "red"
+            });
+        });
+    });
+</script>
+
+<p><link href="https://fonts.googleapis.com/css?family=Electrolize" rel="stylesheet" type="text/css"></p>
+
+
+</div>
+<div class="notes-section notes">
+
+<ul>
+<li>Does anyone recognize this counter?</li>
+<li>It's the python 2.7 end of life counter.</li>
+<li>It was finally retired for good on new year, 2020.</li>
+</ul>
+
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="introduction" id="slides_introduction" class="slide r nofooter" data-transition="none">
+<div class="content r nofooter" ref="slides/introduction">
+<h1>New talk, who dis?</h1>
+
+<p><img src="./file//_images/square.jpeg" alt="profile"></p>
+
+<ul>
+<li>Ben Ford</li>
+<li>Developer Advocate @ Puppet</li>
+<li>@binford2k:
+<a href="https://www.twitter.com/binford2k" target="_blank"> <i class="fab fa-twitter"></i> </a>
+<a href="https://www.github.com/binford2k" target="_blank"> <i class="fab fa-github"></i> </a>
+<a href="https://puppetcommunity.slack.com/team/U11HA7VJ7" target="_blank"> <i class="fab fa-slack"></i> </a>
+</li>
+</ul>
+
+
+</div>
+<div class="notes-section notes">
+
+<ul>
+<li>Hi, I'm Ben, aka binford2k on the interwebs.</li>
+<li>I push the bits and talk to the people at Puppet and in our community.</li>
+<li>If you've been around long enough, then I've probably told you to <em>just fucking
+upgrade already</em> at some point, so in keeping with tradition, I'll be doing that
+again today.</li>
+<li>But this time I'm talking about ways that we can make it easier for you.</li>
+</ul>
+
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="python" id="slides_python1" class="slide" data-transition="none">
+<div class="content " ref="slides/python:1">
+<h1>Python 2.7 has finally been retired</h1>
+
+<h2>Long overdue</h2>
+
+<pre class="highlight"><code class="language-python">#! /usr/bin/env python
+
+print ('Hello World!')</code></pre>
+
+<ul>
+<li>January 1994: Python 1.0 meets the world</li>
+<li>October 2000: 2.0 release</li>
+<li>December 2008: 3.0 release</li>
+</ul>
+
+<h2>2015: Python 2.0 sunset</h2>
+
+
+</div>
+<div class="notes-section notes">
+
+<ul>
+<li>That's a SEVEN YEAR sunset plan.</li>
+</ul>
+
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="python" id="slides_python2" class="slide" data-transition="none">
+<div class="content " ref="slides/python:2">
+<h1>Python 2.7 has finally been retired</h1>
+
+<h2>Long overdue</h2>
+
+<pre class="highlight"><code class="language-python">#! /usr/bin/env python
+
+print ('Hello World!')</code></pre>
+
+<ul>
+<li>January 1994: Python 1.0 meets the world</li>
+<li>October 2000: 2.0 release</li>
+<li>December 2008: 3.0 release</li>
+</ul>
+
+<p class="callout quote">We did not want to hurt the people using Python 2. So, in 2008,
+we announced that we would sunset Python 2 in 2015, and asked people to upgrade
+before then. Some did, but many did not. So, in 2014, we extended that sunset
+till 2020.</p>
+
+<h2>Postponed sunset date of <em>January 1, 2020</em>
+</h2>
+
+
+</div>
+<div class="notes-section notes">
+
+<ul>
+<li>From the release of 3.0 to the ultimate retiring of the legacy 2.0 line is TWELVE YEARS.</li>
+</ul>
+
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="delayed" id="slides_delayed1" class="slide" data-transition="none">
+<div class="content " ref="slides/delayed:1">
+<p><img src="./file//_images/python_death_extended.png" alt="Extended again"></p>
+
+
+</div>
+<div class="notes-section notes">
+
+<ul>
+<li>Even with a 12 year offramp, the end still came abruptly.</li>
+<li>Four month reprieve. Again.</li>
+<li>This brand new Mac I'm running, with the latest operating system still defaults to python 2.7</li>
+<li>So does Debian stable.</li>
+<li>So does CentOS</li>
+<li>...</li>
+</ul>
+
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="delayed" id="slides_delayed2" class="slide huge" data-transition="none">
+<div class="content huge" ref="slides/delayed:2">
+<h1>Let's update that clock...</h1>
+
+<h3>🤷‍♀️</h3>
+
+<div id="delayed" class="python-27-clock"></div>
+
+<div class="guido-button-block">
+    <button class="js-guido-mode guido-button">Enable Guido Mode</button>
+</div>
+
+<script>
+    $(document).ready(function () {
+        var death = moment("20200430", "YYYYMMDD").utc().toDate();
+        $('.python-27-clock#delayed').countdown({
+            until: death,
+            format: 'YODHMS'
+        });
+        $('.js-guido-mode').on('click', function () {
+            $('.python-27-clock').css({
+                "font-family": "'Electrolize', sans-serif",
+                "background-color": "black",
+                "color": "red"
+            });
+        });
+    });
+</script>
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="this_is_not" id="slides_this_is_not1" class="slide" data-transition="none">
+<div class="content " ref="slides/this_is_not:1">
+<h1>This talk is not..</h1>
+
+<h2>Some things that I'm not talking about today</h2>
+
+<p class="callout info">So far, this sounds like I'm dishing on Python. I want to be clear
+that I don't intend it this way at all. They're amazing and a victim of their
+own success. This is a good problem to have.</p>
+
+<ul>
+<li>Putting down legacy software.</li>
+<li>Downplaying the operational cost of upgrading.</li>
+<li>Difficulty of maintaining backwards compatibility.</li>
+<li>Move fast and break things.</li>
+</ul>
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="this_is_not" id="slides_this_is_not2" class="slide" data-transition="none">
+<div class="content " ref="slides/this_is_not:2">
+<h1>This talk is not..</h1>
+
+<h2>Some things that I'm not talking about today</h2>
+
+<p class="callout info">So far, this sounds like I'm dishing on Python. I want to be clear
+that I don't intend it this way at all. They're amazing and a victim of their
+own success. This is a good problem to have.</p>
+
+<ul>
+<li>Putting down legacy software.</li>
+<li>Downplaying the operational cost of upgrading.</li>
+<li>Difficulty of maintaining backwards compatibility.</li>
+<li>Move fast and <strike>break things</strike>.
+
+<ul>
+<li>Updated: ^ DON'T break things.</li>
+</ul>
+</li>
+</ul>
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="maintenance_hard" id="slides_maintenance_hard1" class="slide" data-transition="none">
+<div class="content " ref="slides/maintenance_hard:1">
+<h1>Maintenance is really hard</h1>
+
+<h2>For projects and for infrastructures both</h2>
+
+<ul>
+<li>Cost of supporting old features grows exponentially over time.</li>
+<li>Reduces the pace for improvements.</li>
+<li>Means that new features are harder to use.
+
+<ul>
+<li>Convoluted to continue supporting old functionality too.</li>
+</ul>
+</li>
+<li>Breaking changes break infrastructure.
+
+<ul>
+<li>Must expend effort just to get back to where you were.</li>
+</ul>
+</li>
+</ul>
+
+<hr>
+
+<p class="callout meh">Example:<br>
+it's hard to make collectors work better when people depend on the old
+behaviour and weird side effects!</p>
+
+<pre class="highlight"><code class="language-puppet"># Inadvertently realizes every single virtual package in the catalog!
+Yumrepo &lt;| |&gt; -&gt; Package&lt;| |&gt;</code></pre>
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="maintenance_hard" id="slides_maintenance_hard2" class="slide" data-transition="none">
+<div class="content " ref="slides/maintenance_hard:2">
+<h1>Maintenance is really hard</h1>
+
+<p class="callout warning">Sometimes it feels like we're paddling really hard just to stay where we are.</p>
+
+<p><img src="./file//_images/dog_paddle.jpg" alt="Dog paddling "></p>
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="motivation" id="slides_motivation1" class="slide" data-transition="none">
+<div class="content " ref="slides/motivation:1">
+<h1>Motivation for change</h1>
+
+<h2>Or not.</h2>
+
+<p><img src="./file//_images/upgrade_ramp1.png" class=" omnigraffle" alt=""></p>
+
+<ul>
+<li>Inertia
+
+<ul>
+<li>Resistance to change is a real thing</li>
+<li>Why upgrade when it works fine?</li>
+</ul>
+</li>
+<li>Reward
+
+<ul>
+<li>New features.</li>
+<li>Works better/faster/safer.</li>
+</ul>
+</li>
+</ul>
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="motivation" id="slides_motivation2" class="slide" data-transition="none">
+<div class="content " ref="slides/motivation:2">
+<h1>Motivation for change</h1>
+
+<h2>Or not.</h2>
+
+<p><img src="./file//_images/upgrade_ramp1.png" class=" omnigraffle" alt=""></p>
+
+<ul>
+<li>Inertia
+
+<ul>
+<li>Effectively a CONSTANT for any given community.</li>
+<li>Little control over this value.</li>
+</ul>
+</li>
+<li>Reward
+
+<ul>
+<li>The amount of reward we can offer in a new release is finite.</li>
+<li>It's never going to wash your car or do your laundry.</li>
+<li>Ultimately, little control over this value either.</li>
+</ul>
+</li>
+</ul>
+
+
+</div>
+<div class="notes-section notes">
+
+<ul>
+<li>Inertia:
+
+<ul>
+<li>Early adopters have very low inertia and are happy to chase the bleeding edge.</li>
+<li>Late adopters or enterprise customers value stability and resist change.</li>
+<li>The only way we can control <em>inertia</em> is by targeting a different community.</li>
+<li>Education doesn't change what the institution values.</li>
+</ul>
+</li>
+<li>Reward:
+
+<ul>
+<li>The cost of adding new features grows exponentially as a project matures.</li>
+<li>Often we pay for it in stability, which ends up as a detractor again.</li>
+<li>And there are limits to what we can build in any given release cycle.</li>
+</ul>
+</li>
+</ul>
+
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="friction" id="slides_friction" class="slide" data-transition="none">
+<div class="content " ref="slides/friction">
+<h1>Friction</h1>
+
+<h2>But there's a third factor</h2>
+
+<p><img src="./file//_images/upgrade_ramp2.png" class=" omnigraffle" alt=""></p>
+
+<p class="callout lightbulb">Friction is the factor that makes forward motion more difficult.
+I'm representing it as the slope in this drawing. And this we <strong><em>can affect</em></strong>.</p>
+
+
+</div>
+<div class="notes-section notes">
+
+<ul>
+<li>Make the upgrade path easier, more predictable, and more reliable.</li>
+<li>Build trust in the transitions.
+
+<ul>
+<li>Admittedly, in the earlier days Puppet wasn't great at this.</li>
+</ul>
+</li>
+<li>Automate what we can, so the mental cost is lower.
+
+<ul>
+<li>Example: database backed apps generally handle schema updates for you.</li>
+</ul>
+</li>
+</ul>
+
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="puppet3_function" id="slides_puppet3_function1" class="slide" data-transition="none">
+<div class="content " ref="slides/puppet3_function:1">
+<h1>Puppet 3.x functions</h1>
+
+<h2>An example of this in action.</h2>
+
+<pre class="highlight"><code class="language-ruby">module Puppet::Parser::Functions
+  newfunction(:strlen, :type =&gt; :rvalue) do |args|
+    raise "Wrong number of args" unless args.size == 1
+    raise "Wrong type of args" unless args.first.is_a String
+
+    args.first.length
+  end
+end</code></pre>
+
+<ul>
+<li>Designed for a simpler time.</li>
+<li>Environment safety wasn't yet a concern.</li>
+<li>Didn't understand the cost of polluting the global namespace.
+
+<ul>
+<li>Module ecosystem wasn't as rich, so collisions were rare.</li>
+</ul>
+</li>
+<li>Manhandling arguments marshalled into an array didn't seem like a big deal.</li>
+<li>Weird <code>:rvalue</code> parameters were fine; bleeding edge, remember?
+
+<ul>
+<li>Later on we added <code>:arity</code> too. What does that even mean?</li>
+</ul>
+</li>
+</ul>
+
+
+</div>
+<div class="notes-section notes">
+
+<ul>
+<li>rvalue and arity are well known terms to computer scientists.
+
+<ul>
+<li>Most of us are not computer scientists.</li>
+</ul>
+</li>
+<li>Pulluting the global namespace meant that any function could easily stomp on
+any other -- or even interfere with Puppet internals.</li>
+<li>Leaking across environments meant that functions often leaked into production
+long before we intended them too.</li>
+</ul>
+
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="puppet3_function" id="slides_puppet3_function2" class="slide" data-transition="none">
+<div class="content " ref="slides/puppet3_function:2">
+<h1>Puppet 3.x functions</h1>
+
+<h2>An example of this in action.</h2>
+
+<pre class="highlight"><code class="language-ruby">module Puppet::Parser::Functions
+  newfunction(:strlen, :type =&gt; :rvalue) do |args|
+    raise "Wrong number of args" unless args.size == 1
+    raise "Wrong type of args" unless args.first.is_a String
+
+    args.first.length
+  end
+end</code></pre>
+
+<ul>
+<li>But they were easy to write.</li>
+<li>Cut &amp; pasted boilerplate.</li>
+<li>We got used to the warts.</li>
+</ul>
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="puppet3_function" id="slides_puppet3_function3" class="slide huge" data-transition="none">
+<div class="content huge" ref="slides/puppet3_function:3">
+<h1>Puppet 3.x functions</h1>
+
+<h2>An example of this in action.</h2>
+
+<pre class="highlight"><code class="language-ruby">module Puppet::Parser::Functions
+  newfunction(:strlen, :type =&gt; :rvalue) do |args|
+    raise "Wrong number of args" unless args.size == 1
+    raise "Wrong type of args" unless args.first.is_a String
+
+    args.first.length
+  end
+end</code></pre>
+
+<h3>🤷‍♀️</h3>
+
+
+</div>
+<div class="notes-section notes"><p>
+Eh. They're good enough.
+</p></div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="porting" id="slides_porting" class="slide huge" data-transition="none">
+<div class="content huge" ref="slides/porting">
+<h1>Modern Function API</h1>
+
+<h2>Elegantly solves all those problems.</h2>
+
+<ul>
+<li>Environment safe!</li>
+<li>Thread safe!</li>
+<li>No global namespace pollution!</li>
+<li>Data typed function signatures!</li>
+</ul>
+
+<h3>🎉</h3>
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="identify_components" id="slides_identify_components1" class="slide" data-transition="none">
+<div class="content " ref="slides/identify_components:1">
+<h1>Easy to port</h1>
+
+<h2>First identify components:</h2>
+
+<p class="callout info">Function name.</p>
+
+<pre class="highlight"><code class="language-ruby">module Puppet::Parser::Functions
+*  newfunction(:strlen,
+    :type =&gt; :rvalue,
+    :doc  =&gt; "Just a naive strlen example",
+  ) do |args|
+    raise "Wrong number of args" unless args.size == 1
+    raise "Wrong type of args" unless args.first.is_a String
+
+    args.first.length
+  end
+end</code></pre>
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="identify_components" id="slides_identify_components2" class="slide" data-transition="none">
+<div class="content " ref="slides/identify_components:2">
+<h1>Easy to port</h1>
+
+<h2>First identify components:</h2>
+
+<p class="callout info">Documentation.</p>
+
+<pre class="highlight"><code class="language-ruby">module Puppet::Parser::Functions
+  newfunction(:strlen,
+    :type =&gt; :rvalue,
+*    :doc  =&gt; "Just a naive strlen example",
+  ) do |args|
+    raise "Wrong number of args" unless args.size == 1
+    raise "Wrong type of args" unless args.first.is_a String
+
+    args.first.length
+  end
+end</code></pre>
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="identify_components" id="slides_identify_components3" class="slide" data-transition="none">
+<div class="content " ref="slides/identify_components:3">
+<h1>Easy to port</h1>
+
+<h2>First identify components:</h2>
+
+<p class="callout info">Parameter validation and handling.</p>
+
+<pre class="highlight"><code class="language-ruby">module Puppet::Parser::Functions
+  newfunction(:strlen,
+    :type =&gt; :rvalue,
+    :doc  =&gt; "Just a naive strlen example",
+  ) do |args|
+*    raise "Wrong number of args" unless args.size == 1
+*    raise "Wrong type of args" unless args.first.is_a String
+
+    args.first.length
+  end
+end</code></pre>
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="identify_components" id="slides_identify_components4" class="slide" data-transition="none">
+<div class="content " ref="slides/identify_components:4">
+<h1>Easy to port</h1>
+
+<h2>First identify components:</h2>
+
+<p class="callout info">Implementation.</p>
+
+<pre class="highlight"><code class="language-ruby">module Puppet::Parser::Functions
+  newfunction(:strlen,
+    :type =&gt; :rvalue,
+    :doc  =&gt; "Just a naive strlen example",
+  ) do |args|
+    raise "Wrong number of args" unless args.size == 1
+    raise "Wrong type of args" unless args.first.is_a String
+
+*    args.first.length
+  end
+end</code></pre>
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="write_replacement" id="slides_write_replacement1" class="slide" data-transition="none">
+<div class="content " ref="slides/write_replacement:1">
+<h1>Easy to port</h1>
+
+<h2>Then write replacements:</h2>
+
+<p class="callout info">Function name.</p>
+
+<pre class="highlight"><code class="language-ruby"># @summary
+#   Just a naive strlen example
+* Puppet::Functions.create_function(:'mymod::strlen') do
+  # @param value
+  #   The string to calculate the length of
+  # @return [Integer]
+  #   The length of the input string
+  dispatch :default_impl do # invoke default_impl method when matched
+    param 'String', :value
+  end
+
+  def default_impl(value)
+    value.length
+  end
+end</code></pre>
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="write_replacement" id="slides_write_replacement2" class="slide" data-transition="none">
+<div class="content " ref="slides/write_replacement:2">
+<h1>Easy to port</h1>
+
+<h2>Then write replacements:</h2>
+
+<p class="callout info">Documentation.</p>
+
+<pre class="highlight"><code class="language-ruby">* # @summary
+* #   Just a naive strlen example
+Puppet::Functions.create_function(:'mymod::strlen') do
+*  # @param value
+*  #   The string to calculate the length of
+*  # @return [Integer]
+*  #   The length of the input string
+  dispatch :default_impl do # invoke default_impl method when matched
+    param 'String', :value
+  end
+
+  def default_impl(value)
+    value.length
+  end
+end</code></pre>
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="write_replacement" id="slides_write_replacement3" class="slide" data-transition="none">
+<div class="content " ref="slides/write_replacement:3">
+<h1>Easy to port</h1>
+
+<h2>Then write replacements:</h2>
+
+<p class="callout info">Parameter validation and handling.</p>
+
+<pre class="highlight"><code class="language-ruby"># @summary
+#   Just a naive strlen example
+Puppet::Functions.create_function(:'mymod::strlen') do
+  # @param value
+  #   The string to calculate the length of
+  # @return [Integer]
+  #   The length of the input string
+*  dispatch :default_impl do # invoke default_impl method when matched
+*    param 'String', :value
+*  end
+
+  def default_impl(value)
+    value.length
+  end
+end</code></pre>
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="write_replacement" id="slides_write_replacement4" class="slide" data-transition="none">
+<div class="content " ref="slides/write_replacement:4">
+<h1>Easy to port</h1>
+
+<h2>Then write replacements:</h2>
+
+<p class="callout info">Implementation.</p>
+
+<pre class="highlight"><code class="language-ruby"># @summary
+#   Just a naive strlen example
+Puppet::Functions.create_function(:'mymod::strlen') do
+  # @param value
+  #   The string to calculate the length of
+  # @return [Integer]
+  #   The length of the input string
+  dispatch :default_impl do # invoke default_impl method when matched
+    param 'String', :value
+  end
+
+*  def default_impl(value)
+*    value.length
+*  end
+end</code></pre>
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="inertia2" id="slides_inertia2" class="slide" data-transition="none">
+<div class="content " ref="slides/inertia2">
+<h1>Let's come back to inertia for a bit</h1>
+
+<h2>Drivers or blockers to change</h2>
+
+<p><img src="./file//_images/upgrade_ramp1.png" class=" omnigraffle" alt=""></p>
+
+<ul>
+<li>We showed the rewards already.</li>
+<li>Elimination of some major pain points.</li>
+<li>But the module author doesn't necessarily have those pain points.</li>
+<li>And the end user doesn't always <em>see</em> the benefits.</li>
+</ul>
+
+<p class="callout info">Inertia is constant and significant. And rewards are actually
+quite small.</p>
+
+
+</div>
+<div class="notes-section notes">
+
+<ul>
+<li>Any change is more work than doing nothing at all.
+
+<ul>
+<li>We don't update just to upgrade.</li>
+<li>If it already works, upgrading without improvements is just a opportunity to break something.</li>
+</ul>
+</li>
+<li>The differential between the cost of upgrading and the benefits of upgrading is vanishingly small.</li>
+<li>This means that we have a very small window to provide incentives to upgrade.
+
+<ul>
+<li>Which is why people are still using Python 2.7.</li>
+</ul>
+</li>
+</ul>
+
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="motivation2" id="slides_motivation2" class="slide" data-transition="none">
+<div class="content " ref="slides/motivation2">
+<h1>What about upping the reward?</h1>
+
+<h2>How much more motivation can we provide?</h2>
+
+<p><img src="./file//_images/upgrade_ramp1.png" class=" omnigraffle" alt=""></p>
+
+<ul>
+<li>Surface pain points via warnings.</li>
+<li>Add functionality that doesn't exist in earlier API.</li>
+<li>Provide better documentation via <code>puppet-strings</code>.</li>
+<li>... not really a lot ....</li>
+</ul>
+
+<p class="callout meh">When inertia and friction is greater than reward, we have stasis.</p>
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="friction2" id="slides_friction2" class="slide" data-transition="none">
+<div class="content " ref="slides/friction2">
+<h1>Friction</h1>
+
+<h2>So what can we do to lower friction?</h2>
+
+<p><img src="./file//_images/upgrade_ramp2.png" class=" omnigraffle" alt=""></p>
+
+<ul>
+<li>Make the upgrade path easier, more predictable, and more reliable.</li>
+<li>Demonstrate the process.
+
+<ul>
+<li>Publishing tutorials and blog posts.</li>
+</ul>
+</li>
+<li>Automate what we can, so the mental cost is lower.</li>
+</ul>
+
+<p class="callout question">Can I programatically identify the components we just looked at?</p>
+
+
+</div>
+<div class="notes-section notes">
+
+<p>Since we've only got a tiny window to work with, let's not waste it with friction.</p>
+
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="automate" id="slides_automate1" class="slide" data-transition="none">
+<div class="content " ref="slides/automate:1">
+<h1>Yes we can!</h1>
+
+<h2>(well mostly)</h2>
+
+<p class="callout info">It turns out that identifying the parts of a Puppet 3.x function
+that we care about is almost completely automatable.</p>
+
+<ul>
+<li>Over the American Thanksgiving holiday, I had a little free time.</li>
+<li>This was a problem that had intruiged me so I dove in.</li>
+<li>Ruby makes it surprisingly easy to introspect into source code.</li>
+<li>As is tradition, I built a cleverly named tool to assist in the update.
+
+<ul>
+<li><a href="https://github.com/binford2k/puppet-function-updater" target="_blank">https://github.com/binford2k/puppet-function-updater</a></li>
+<li><a href="https://binford2k.com/2019/11/27/automagic-function-port/" target="_blank">https://binford2k.com/2019/11/27/automagic-function-port/</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="automate" id="slides_automate2" class="slide" data-transition="none">
+<div class="content " ref="slides/automate:2">
+<h1>Parses function source files</h1>
+
+<h2>Generates replacement modern API function</h2>
+
+<pre class="highlight"><code class="language-console">[~/Projects/puppetlabs-stdlib]$ puppet_function_updater --verbose
+INFO: Creating lib/puppet/functions/stdlib/abs.rb
+INFO: Creating lib/puppet/functions/stdlib/any2array.rb
+INFO: Creating lib/puppet/functions/stdlib/any2bool.rb
+INFO: Creating lib/puppet/functions/stdlib/assert_private.rb
+INFO: Creating lib/puppet/functions/stdlib/base64.rb
+INFO: Creating lib/puppet/functions/stdlib/basename.rb
+[...]
+INFO: Creating lib/puppet/functions/stdlib/values_at.rb
+INFO: Creating lib/puppet/functions/stdlib/zip.rb
+INFO: Functions generated. Please inspect for suitability and then
+INFO: update any Puppet code with the new function names.
+INFO: See https://puppet.com/docs/puppet/latest/custom_functions_ruby.html
+INFO: for more information about Puppet's modern Ruby function API.</code></pre>
+
+<ul>
+<li>Ports old patterns to new patterns</li>
+<li>Generates a simplistic spec test for each function</li>
+<li>Validates each function and warns on invalid output</li>
+</ul>
+
+
+</div>
+<div class="notes-section notes">
+
+<ul>
+<li>I'm sure that some of you will be disappointed that I'm not going into tech
+details about how this thing works.</li>
+<li>But my slot doesn't give me time for it.</li>
+<li>I'll be happy to talk later, or tomorrow at our Contributor session.</li>
+</ul>
+
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="automate" id="slides_automate3" class="slide" data-transition="none">
+<div class="content " ref="slides/automate:3">
+<h1>Ports <em>most</em> of the function cleanly</h1>
+
+<h2>Legacy API doesn't capture the function signature</h2>
+
+<p class="callout info">Remember that the legacy API just passed all arguments as a single
+untyped array and relied on the programmer to know what to do with that.</p>
+
+<ul>
+<li>The only part of the function that I cannot infer reliably.</li>
+<li>So instead, I create a <code>dispatch</code> that does the same thing.</li>
+</ul>
+
+
+
+<pre class="highlight"><code class="language-ruby">dispatch :default_impl do
+  # Call the method named 'default_impl' when this is matched
+  # Port this to match individual params for better type safety
+  repeated_param 'Any', :arguments
+end</code></pre>
+
+
+
+<pre class="highlight"><code class="language-ruby">def default_impl(*arguments)
+    # paraeter handling and implementation copied in
+end</code></pre>
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="mass_update" id="slides_mass_update1" class="slide" data-transition="none">
+<div class="content " ref="slides/mass_update:1">
+<h1>Then I got a little crazy</h1>
+
+<h2>What if we could update the whole world?</h2>
+
+<p><img src="./file//_images/philosoraptor.jpeg" alt="Philosoraptor"></p>
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="mass_update" id="slides_mass_update2" class="slide" data-transition="none">
+<div class="content " ref="slides/mass_update:2">
+<h1>Then I got a little crazy</h1>
+
+<h2>What if we could update the whole world?</h2>
+
+<p class="callout info">GitHub exposes a fantastic BigQuery dataset of all their public repositories.</p>
+
+<p>Generate a list of all Puppet modules with legacy functions:</p>
+
+<pre class="highlight"><code class="language-sql">SELECT DISTINCT repo_name
+FROM `bigquery-public-data:github_repos.files`
+WHERE STARTS_WITH(path, 'lib/puppet/parser/functions')
+AND ref = 'refs/heads/master'</code></pre>
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="mass_update" id="slides_mass_update3" class="slide" data-transition="none">
+<div class="content " ref="slides/mass_update:3">
+<h1>Validate the tool</h1>
+
+<h2>First let's build some confidence</h2>
+
+<ol>
+<li>First I wrote a quick script to clone each listed repo.</li>
+<li>Then it ran my tool to port functions.</li>
+<li>If successful, it deleted the repo.</li>
+</ol>
+
+<p>I was left with 47 modules with edge cases to account for, but after a couple
+iterations and improvements, it ported all valid functions flawlessly.</p>
+
+<p><img src="./file//_images/thumbsup.gif" alt="Thumbs UP"></p>
+
+
+</div>
+<div class="notes-section notes">
+<p>
+So then I ran it and went out for the night.</p>
+
+<ol>
+<li>Instead of just cloning, now it forked too.</li>
+<li>After running, it submitted a PR with instructions on how to complete the job.</li>
+<li>And then cleaned up by deleted the repo from my namespace.</li>
+</ol>
+
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="next_steps" id="slides_next_steps" class="slide" data-transition="none">
+<div class="content " ref="slides/next_steps">
+<h1>Next steps</h1>
+
+<h2>Finishing the port</h2>
+
+<p class="callout thumbsup">The automated pull request included links to the
+<a href="https://binford2k.com/2019/11/27/automagic-function-port/" target="_blank">accompanying tutorial</a>
+that describes these steps on how to finish the port.</p>
+
+<h2>Left as an exercise for the author:</h2>
+
+<ul>
+<li>Port manifests to use the namespaced function name.
+
+<ul>
+<li>Or change it back to top-level (only if you're <code>stdlib</code>!)</li>
+</ul>
+</li>
+<li>Add one or more dispatches with proper data types.</li>
+<li>Convert (or write) documentation to <code>puppet-strings</code> format.</li>
+<li>Write more tests following the example provided.</li>
+</ul>
+
+
+</div>
+<div class="notes-section notes">
+
+<ul>
+<li>The port is effectively bug-for-bug.</li>
+<li>Can't magically infer the parameter handling.</li>
+<li>Just copied docs straight over.</li>
+<li>Validated code, but doesn't take advantage of new features.</li>
+<li>Note that changing the function name makes it a <strong><em>semver breaking change</em></strong>
+even if functionality is exactly the same.</li>
+</ul>
+
+<p><a href="https://binford2k.com/2019/11/27/automagic-function-port/" target="_blank">https://binford2k.com/2019/11/27/automagic-function-port/</a></p>
+
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="community_response" id="slides_community_response1" class="slide" data-transition="none">
+<div class="content " ref="slides/community_response:1">
+<h1>Mixed Response</h1>
+
+<h2>But mostly positive</h2>
+
+<p>Some were sort of neutral:</p>
+
+<p class="callout quote">Cute idea, however I’m not going to merge it unless someone
+gives it a smoke test at least.</p>
+
+<p>Some were very positive:</p>
+
+<p class="callout quote">I love this initiative by @binford2k ❤️ #puppetize #opensource</p>
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="community_response" id="slides_community_response2" class="slide huge" data-transition="none">
+<div class="content huge" ref="slides/community_response:2">
+<h1>Mixed Response</h1>
+
+<h2>But mostly positive</h2>
+
+<p>But the two biggest annoyances were:</p>
+
+<ol>
+<li>My fork detection didn't work properly and it contributed PRs to forks
+instead of just upstream projects.</li>
+<li>It created detached pull requests, which meant that module owners couldn't
+just add to the PR to get a self-contained function port. They had to <em>merge it</em>
+and then add more commits to flesh it out.</li>
+</ol>
+
+<h3>😐</h3>
+
+
+</div>
+<div class="notes-section notes">
+
+<p>Also, nobody asked or suggested it, but I should have DCO signed the commits.</p>
+
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="engagement" id="slides_engagement" class="slide" data-transition="none">
+<div class="content " ref="slides/engagement">
+<h1>Community Engagement</h1>
+
+<h2>Developer to developer</h2>
+
+<ul>
+<li>Authenticity is key.</li>
+<li>Reaching out to your users is <em>always</em> valued.
+
+<ul>
+<li>Maybe it actually helped improve someone's code.</li>
+<li>Or it just provided a reminder to do it.</li>
+<li>Or even didn't help directly, but showed someone <em>how</em> to do it.</li>
+</ul>
+</li>
+<li>Even in the worst case, it's a signal that we care.</li>
+<li>This connection keeps us all invested in each other and our community.</li>
+</ul>
+
+<p class="callout cheers">I'm grateful to all of you and to the culture we have built here.
+Even when a contribution isn't perfect, it's recognized and valued as a genuine
+desire to help improve things. I credit <a href="https://voxpupuli.org" target="_blank"><strong>Vox Pupuli</strong></a> for a lot of that.</p>
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="learn_history" id="slides_learn_history" class="slide" data-transition="none">
+<div class="content " ref="slides/learn_history">
+<h1>Getting better over time</h1>
+
+<h2>We've got a small history of these things now</h2>
+
+<ul>
+<li>Manually fixed 5-10 modules broken by a <code>puppetlabs/mysql</code> update.</li>
+<li>Discovered a crashing bug when a module had a zero-byte <code>init.pp</code> file.
+
+<ul>
+<li>Identified all the 218 modules affected.</li>
+<li>Ranked and evaluated by usage and ecosystem impact.</li>
+<li>Scripted pull request run instead of yanking the release.</li>
+<li>Fun fact: I ran this from the floor of <em>Puppetize Live: Amsterdam</em>.</li>
+</ul>
+</li>
+<li>We're doing this 2-3 times a year now.</li>
+<li>Learning each time, maybe we can do more?</li>
+</ul>
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="speculation_what_else" id="slides_speculation_what_else" class="slide speculation" data-transition="none">
+<div class="content speculation" ref="slides/speculation_what_else">
+<h1>What else?</h1>
+
+<h2>Future developer enablement</h2>
+
+<ul>
+<li>What other ways could we engage and enable?</li>
+<li>Do we like the idea of offering PR fixes?</li>
+<li>Build a framework for more one-off runs like this.
+
+<ul>
+<li>Automatically upgrade Hiera 3 hierarchies to Hiera 5?</li>
+<li>Port known facts to the modern <code>fact()</code> function?</li>
+</ul>
+</li>
+<li>Other parts of Puppet are following suit:
+
+<ul>
+<li>The Bolt project automatically updates your inventory file.</li>
+</ul>
+</li>
+</ul>
+
+<p class="callout info">Notice the giant ribbon in the corner? These handful of slides are
+just me spitballing the future! Don't expect these to be promises.</p>
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="speculation_pdk_update" id="slides_speculation_pdk_update" class="slide speculation" data-transition="none">
+<div class="content speculation" ref="slides/speculation_pdk_update">
+<h1>Puppet Developer Kit</h1>
+
+<h2>Create PDK plugins for update scripts</h2>
+
+<ul>
+<li>A full plugin system for the PDK is near.</li>
+<li>Perhaps the update scripts should go there.</li>
+<li>The PR framework can invoke the PDK.</li>
+<li>Or module authors can use it themselves.</li>
+</ul>
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="speculation_forge_scanfix" id="slides_speculation_forge_scanfix" class="slide speculation" data-transition="none">
+<div class="content speculation" ref="slides/speculation_forge_scanfix">
+<h1>Forge tie ins?</h1>
+
+<h2>The Forge is rad. Can we make it moreso?</h2>
+
+<ul>
+<li>Maybe opt-in on Forge profile page.</li>
+<li>Instead of scraping GitHub, let authors choose.</li>
+<li>Alerts for out-of-date platform or Puppet dependencies.
+
+<ul>
+<li>Shoot, maybe we could even validate for you.</li>
+<li>Generate tested platform support instead of requiring you declare it.</li>
+</ul>
+</li>
+<li>Warnings when modules you depend on are updated.</li>
+</ul>
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="lower_friction" id="slides_lower_friction" class="slide" data-transition="none">
+<div class="content " ref="slides/lower_friction">
+<h1>Which brings us back to friction</h1>
+
+<h2>and how we can lower it.</h2>
+
+<p><img src="./file//_images/upgrade_ramp2.png" class=" omnigraffle" alt=""></p>
+
+<p class="callout lightbulb">My job is to lower your friction as a developer.</p>
+
+<ul>
+<li>Your main job isn't to write Puppet code.</li>
+<li>Your jub is to architect, build, deploy, maintain, update infrastructure.</li>
+<li>Puppet is just one tool that helps you do that job.
+
+<ul>
+<li>And my job is to make that easier for you.</li>
+</ul>
+</li>
+</ul>
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="provide_path" id="slides_provide_path" class="slide" data-transition="none">
+<div class="content " ref="slides/provide_path">
+<h1>Provide a path</h1>
+
+<h2>And give you the tools to do so.</h2>
+
+<h3>Other irons in the fire now.</h3>
+
+<ul>
+<li>Rangefinder code change impact analysis
+
+<ul>
+<li>What downstream usage could a pull request affect?</li>
+</ul>
+</li>
+<li>Content usage telemetry project
+
+<ul>
+<li>How many people are using which classes and types from your modules and on what platforms?</li>
+<li>For this, I'll need your help socializing so people adopt it.</li>
+</ul>
+</li>
+</ul>
+
+<p class="callout heart">Most importantly, both of these tools are powered by <em>open datasets</em>
+that are finally just weeks from going public. You'll be able to use the same
+data to invent other tooling.</p>
+
+
+</div>
+<div class="notes-section notes">
+
+<ul>
+<li>
+<a href="https://github.com/puppetlabs/puppet-community-rangefinder" target="_blank">https://github.com/puppetlabs/puppet-community-rangefinder</a>
+
+<ul>
+<li>Example: <a href="https://github.com/puppetlabs/puppetlabs-postgresql/pull/1132" target="_blank">https://github.com/puppetlabs/puppetlabs-postgresql/pull/1132</a>
+</li>
+</ul>
+</li>
+<li>Telemetry implmentation is not published yet
+
+<ul>
+<li>Hacking on it during Contributor event tomorrow</li>
+<li>Want feedback on data collection and privacy</li>
+</ul>
+</li>
+</ul>
+
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="easier_than_not" id="slides_easier_than_not" class="slide huge" data-transition="none">
+<div class="content huge" ref="slides/easier_than_not">
+<h1>And ultimately</h1>
+
+<h2>We are working to make your job as contributors easier</h2>
+
+<p class="callout heart">Our goal is that maintaining quality should be easier than not.</p>
+
+<h3>👍</h3>
+
+
+</div>
+<div class="notes-section notes">
+
+<ul>
+<li>You'll notice that my handle is on every one of these slides.</li>
+<li>That's because I want to hear from you.
+
+<ul>
+<li>feedback, suggestions, ideas.</li>
+</ul>
+</li>
+</ul>
+
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="summary" id="slides_summary1" class="slide" data-transition="none">
+<div class="content " ref="slides/summary:1">
+<h1>A quick summary</h1>
+
+<h2>Motivation for change and initiatives</h2>
+
+<ul>
+<li>Velocity of change is driven by three things.
+
+<ul>
+<li>
+<em>Inertia</em> holds you back.</li>
+<li>Promise of <em>Rewards</em> pulls you forward.</li>
+<li>And <em>Friction</em> slows or prevents change.</li>
+</ul>
+</li>
+<li>Project maintainers have little control over inertia or rewards.</li>
+<li>But we can work to decrease friction.</li>
+</ul>
+
+<p class="callout info">These points apply to you in your own open source projects too.</p>
+
+
+</div>
+<div class="notes-section notes"><p>
+As both a consumer and as a producer.
+</p></div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="summary" id="slides_summary2" class="slide" data-transition="none">
+<div class="content " ref="slides/summary:2">
+<h1>A quick summary</h1>
+
+<h2>Motivation for change and initiatives</h2>
+
+<ul>
+<li>Some ways that Puppet will be reducing friction for you:
+
+<ul>
+<li>Suggesting fixes/updates for known issues.</li>
+<li>Providing tooling that helps make updates.</li>
+<li>Forge integrations to surface things that can be improved;</li>
+<li>and ways that we can help each other with those improvements.</li>
+</ul>
+</li>
+</ul>
+
+<p><img src="./file//_images/heart-dag.png" alt="Heart DAG"></p>
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="more_info" id="slides_more_info" class="slide" data-transition="none">
+<div class="content " ref="slides/more_info">
+<h1>Learn More</h1>
+
+<h2>The info dump page</h2>
+
+<ul>
+<li>
+<a href="https://puppet.com/blog/refactoring-legacy-ruby-functions/" target="_blank">Porting functions</a> to the new API:
+
+<ul>
+<li><a href="https://puppet.com/blog/refactoring-legacy-ruby-functions/" target="_blank">https://puppet.com/blog/refactoring-legacy-ruby-functions/</a></li>
+</ul>
+</li>
+<li>Check out the automagic <a href="https://github.com/binford2k/puppet-function-updater" target="_blank">Puppet Function Updater</a>:
+
+<ul>
+<li><a href="https://github.com/binford2k/puppet-function-updater" target="_blank">https://github.com/binford2k/puppet-function-updater</a></li>
+<li>Maybe help me port it to the PDK?</li>
+</ul>
+</li>
+<li>Read more about <a href="https://puppet.com/docs/puppet/latest/puppet_strings.html" target="_blank">documenting your functions or other Puppet code</a>
+
+<ul>
+<li><a href="https://puppet.com/docs/puppet/latest/puppet_strings.html" target="_blank">https://puppet.com/docs/puppet/latest/puppet_strings.html</a></li>
+</ul>
+</li>
+<li>Watch my twitter for a link to this presentation soon.</li>
+</ul>
+</div>
+<canvas class="annotations"></canvas>
+</div>
+<div data-section="slides" data-title="puppet_camps" id="slides_puppet_camps" class="slide" data-transition="none">
+<div class="content " ref="slides/puppet_camps">
+<h1>Puppet Camps!</h1>
+
+<h2>Share the awesome projects you're working on</h2>
+
+<p><img src="./file//_images/puppet_camps.png" alt="Puppet Camps"></p>
+
+<p class="callout conversation">CFP for all three is open: <a href="https://docs.google.com/forms/d/1eZ1sytbCr-0mP2Iux-IcGNvELNBiUwZMKBMLd-JL-W8" target="_blank">submit a talk</a>!</p>
+</div>
+<canvas class="annotations"></canvas>
+</div>
+</div>
+<div id="buttonNav">
+  <div id="buttonPrev"><i class="fa fa-chevron-left fa-lg"></i> Previous</div><div id="buttonNext">Next <i class="fa fa-chevron-right fa-lg"></i></div>
+</div>
+<div id="pauseScreen">
+  PAUSED
+</div>
+
+  <script defer type="text/javascript">
+    // We want the audience members to see automatic tours. We can assume that they won't be
+    // using many server domains like the presenter might.
+    var autoTour = true;
+
+    $( document ).ready(function() {
+      if(presenter && !window.opener) {
+        alert('This is an audience view designed for interactivity. If you are placing this window on a projector, you should use the Display View instead.');
+      }
+
+      tours['showoff:activity'] = [
+        {
+          element: ".currentSlide .activityToggle",
+          intro: I18n.t('tour.activity.complete')
+        }
+      ];
+
+      tours['showoff:form'] = [
+        {
+          element: ".currentSlide input.save",
+          intro: I18n.t('tour.form.save')
+        }
+      ];
+
+      tours['showoff:menu'] = [
+        {
+          element: "#hamburger",
+          intro: I18n.t('tour.menu.start')
+        },
+        {
+          element: "#navToggle",
+          intro: I18n.t('tour.menu.navigation')
+        },
+        {
+          element: "#fileDownloads",
+          intro: I18n.t('tour.menu.download')
+        },
+        {
+          element: "#paceFaster",
+          intro: I18n.t('tour.menu.pace')
+        },
+        {
+          element: "#questionToggle",
+          intro: I18n.t('tour.menu.questions')
+        },
+        {
+          element: "#feedbackToggle",
+          intro: I18n.t('tour.menu.feedback')
+        }
+      ].filter(function(item) { return (document.querySelector(item['element'])) });
+      // display tips for only the enabled features
+    });
+  </script>
+
+</body>
+</html>
