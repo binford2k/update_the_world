@@ -1,0 +1,46 @@
+{
+  "name": "Porting the whole world to a new API",
+  "sections": [
+    "slides/overview.md",
+    "slides/introduction.md",
+
+    "slides/python.md",
+    "slides/delayed.md",
+    "slides/this_is_not.md",
+    "slides/maintenance_hard.md",
+
+    /* introduce the problem quickly */
+    "slides/motivation.md",
+    "slides/friction.md",
+
+    "slides/puppet3_function.md",
+    "slides/porting.md",
+    "slides/identify_components.md",
+    "slides/write_replacement.md",
+
+    /* come back to the inertia problem in a bit more detail */
+    "slides/inertia2.md",
+    "slides/motivation2.md",
+    "slides/friction2.md",
+
+    "slides/automate.md",
+    "slides/mass_update.md",
+    "slides/next_steps.md",
+
+    "slides/community_response.md",
+    "slides/engagement.md",
+
+    "slides/learn_history.md",
+    "slides/speculation_what_else.md",
+    "slides/speculation_pdk_update.md",
+    "slides/speculation_forge_scanfix.md",
+
+    "slides/lower_friction.md",
+    "slides/provide_path.md",
+    "slides/easier_than_not.md",
+
+    "slides/summary.md",
+    "slides/more_info.md",
+    "slides/puppet_camps.md"
+  ]
+}
