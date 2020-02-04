@@ -17,6 +17,6 @@
 * If you've been around long enough, then I've probably told you to *just fucking
   upgrade already* at some point, so in keeping with tradition, I'll be doing that
   again today.
-* But this time I'm talking about ways that we can make it easier for you.
+* But this time I'm talking about ways that we are working to make it easier for you.
 
 ~~~ENDSECTION~~~

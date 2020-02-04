@@ -12,11 +12,12 @@
 -----------
 
 .callout.meh Example:<br />
-it's hard to make collectors work better when people depend on the old
-behaviour and weird side effects!
+it's hard to make collectors work better when people depend on their two very
+different and unrelated side effects!
 
     @@@ Puppet
-    # Inadvertently realizes every single virtual package in the catalog!
+    # Ensure our internal mirror is configured before we install any packages
+    # ... but side effect inadvertently realizes all virtual packages!
     Yumrepo <| |> -> Package<| |>
 
 <!SLIDE >

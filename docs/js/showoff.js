@@ -1,6 +1,6 @@
-/* ShowOff JS Logic */
+/* Showoff JS Logic */
 
-var ShowOff = {};
+var Showoff = {};
 
 var preso_started = false
 var slidenum = 0
@@ -2002,7 +2002,7 @@ function setupPreShow(seconds) {
           preshow_des = data;
         })
       } else {
-        $('#preshow').append('<img ref="' + n + '" src="file/_preshow/' + n + '"/>');
+        $('#preshow').append('<img ref="' + n + '" src="file/_preshow/' + n + '" class="preshow" />');
       }
     })
     preshow_images      = $('#preshow > img');
