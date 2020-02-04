@@ -34,7 +34,7 @@ that we care about is almost completely automatable.
     INFO: for more information about Puppet's modern Ruby function API.
 
 * Ports old patterns to new patterns
-* Generates a simplistic spec test for each function
+* Generates a basic spec test for each function
 * Validates each function and warns on invalid output
 
 
@@ -64,12 +64,12 @@ untyped array and relied on the programmer to know what to do with that.
     dispatch :default_impl do
       # Call the method named 'default_impl' when this is matched
       # Port this to match individual params for better type safety
-      repeated_param 'Any', :arguments
+      repeated_param 'Any', :args
     end
 
 .break
 
     @@@ Ruby
-    def default_impl(*arguments)
+    def default_impl(*args)
         # paraeter handling and implementation copied in
     end

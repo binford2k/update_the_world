@@ -5,7 +5,7 @@
 ![.omnigraffle Upgrade ramp](/_images/upgrade_ramp2.png)
 
 * Make the upgrade path easier, more predictable, and more reliable.
-* Demonstrate the process.
+* Show how to do it with education.
     * Publishing tutorials and blog posts.
 * Automate what we can, so the mental cost is lower.
 

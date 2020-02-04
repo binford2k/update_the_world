@@ -728,7 +728,7 @@ it's hard to make collectors work better when people depend on their two very
 different and unrelated side effects!</p>
 
 <pre class="highlight"><code class="language-puppet"># Ensure our internal mirror is configured before we install any packages
-# ... but side effect inadvertently realizes all virtual packages!
+# ... but their side effect also realizes all virtual packages!
 Yumrepo &lt;| |&gt; -&gt; Package&lt;| |&gt;</code></pre>
 
 
@@ -781,7 +781,16 @@ Yumrepo &lt;| |&gt; -&gt; Package&lt;| |&gt;</code></pre>
 </ul>
 
 
+
+
   </div>
+      <div class="notes-section notes">
+
+<ul>
+<li>Often upgrades offer nothing but the chance to make mistakes and break things!</li>
+</ul>
+
+</div>
       <canvas class="annotations"></canvas>
 </div>
 
@@ -808,7 +817,7 @@ Yumrepo &lt;| |&gt; -&gt; Package&lt;| |&gt;</code></pre>
 
 <ul>
 <li>The amount of reward we can offer in a new release is finite.</li>
-<li>It's never going to wash your car or do your laundry.</li>
+<li>Users want new exciting features, but without changing anything.</li>
 <li>Ultimately, little control over this value either.</li>
 </ul>
 </li>
@@ -839,6 +848,9 @@ Yumrepo &lt;| |&gt; -&gt; Package&lt;| |&gt;</code></pre>
 </ul>
 </li>
 </ul>
+
+<p class="callout warning">Ultimately, this means that the differential between inertia
+and reward for a minor upgrade cycle is effectively fixed and pretty small.</p>
 
 </div>
       <canvas class="annotations"></canvas>
@@ -1336,7 +1348,15 @@ quite small.</p>
 <p class="callout meh">When inertia and friction is greater than reward, we have stasis.</p>
 
 
+
+
   </div>
+      <div class="notes-section notes">
+
+<p class="callout warning">This means that new functions are often written to the new API,
+but very few people bother to upgrade their existing functions!</p>
+
+</div>
       <canvas class="annotations"></canvas>
 </div>
 
@@ -1353,7 +1373,7 @@ quite small.</p>
 
 <ul>
 <li>Make the upgrade path easier, more predictable, and more reliable.</li>
-<li>Demonstrate the process.
+<li>Show how to do it with education.
 
 <ul>
 <li>Publishing tutorials and blog posts.</li>
@@ -1432,7 +1452,7 @@ INFO: for more information about Puppet's modern Ruby function API.</code></pre>
 
 <ul>
 <li>Ports old patterns to new patterns</li>
-<li>Generates a simplistic spec test for each function</li>
+<li>Generates a basic spec test for each function</li>
 <li>Validates each function and warns on invalid output</li>
 </ul>
 
@@ -1475,12 +1495,12 @@ untyped array and relied on the programmer to know what to do with that.</p>
 <pre class="highlight"><code class="language-ruby">dispatch :default_impl do
   # Call the method named 'default_impl' when this is matched
   # Port this to match individual params for better type safety
-  repeated_param 'Any', :arguments
+  repeated_param 'Any', :args
 end</code></pre>
 
 
 
-<pre class="highlight"><code class="language-ruby">def default_impl(*arguments)
+<pre class="highlight"><code class="language-ruby">def default_impl(*args)
     # paraeter handling and implementation copied in
 end</code></pre>
 
@@ -1554,11 +1574,13 @@ iterations and improvements, it ported all valid functions flawlessly.</p>
   </div>
       <div class="notes-section notes">
 
-<p>So then I ran it and went out for the night.</p>
+<p>So then I updated the script with a a couple more steps, then ran it and went
+out for the night.</p>
 
 <ol>
 <li>Instead of just cloning, now it forked too.</li>
-<li>After running, it submitted a PR with instructions on how to complete the job.</li>
+<li>It used the GitHub API to ignore forks and only fix upstream modules.</li>
+<li>After porting the function, it would submit a PR with instructions on how to complete the job.</li>
 <li>And then cleaned up by deleted the repo from my namespace.</li>
 </ol>
 
@@ -1698,7 +1720,25 @@ Even when a contribution isn't perfect, it's recognized and valued as a genuine
 desire to help improve things. I credit <a href="https://voxpupuli.org" target="_blank"><strong>Vox Pupuli</strong></a> for a lot of that.</p>
 
 
+
+
   </div>
+      <div class="notes-section notes">
+
+<ul>
+<li>I honestly expected some pushbck from people annoyed by "garbage" PRs</li>
+<li>Turns out that authentic connections with a developer community leads to an
+assumption that things are coming from the right place.</li>
+<li>And people appreciate genuine outreach as long as it's driven by shared value.
+
+<ul>
+<li>Sure, it benefits Puppet when you all upgrade, but it benefits you too, and
+that's the real reason I'm doing this!</li>
+</ul>
+</li>
+</ul>
+
+</div>
       <canvas class="annotations"></canvas>
 </div>
 
@@ -2010,6 +2050,7 @@ data to invent other tooling.</p>
 <h2>The info dump page</h2>
 
 <ul>
+<li>Watch my twitter for a link to this presentation soon.</li>
 <li>
 <a href="https://puppet.com/blog/refactoring-legacy-ruby-functions/" target="_blank">Porting functions</a> to the new API:
 
@@ -2024,13 +2065,19 @@ data to invent other tooling.</p>
 <li>Maybe help me port it to the PDK?</li>
 </ul>
 </li>
+<li>Blog posts on the updater and next steps:
+
+<ul>
+<li><a href="https://binford2k.com/2019/11/27/automagic-function-port/" target="_blank">https://binford2k.com/2019/11/27/automagic-function-port/</a></li>
+<li><a href="https://binford2k.com/2020/01/11/porting-functions/" target="_blank">https://binford2k.com/2020/01/11/porting-functions/</a></li>
+</ul>
+</li>
 <li>Read more about <a href="https://puppet.com/docs/puppet/latest/puppet_strings.html" target="_blank">documenting your functions or other Puppet code</a>
 
 <ul>
 <li><a href="https://puppet.com/docs/puppet/latest/puppet_strings.html" target="_blank">https://puppet.com/docs/puppet/latest/puppet_strings.html</a></li>
 </ul>
 </li>
-<li>Watch my twitter for a link to this presentation soon.</li>
 </ul>
 
 

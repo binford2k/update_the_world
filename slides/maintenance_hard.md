@@ -17,7 +17,7 @@ different and unrelated side effects!
 
     @@@ Puppet
     # Ensure our internal mirror is configured before we install any packages
-    # ... but side effect inadvertently realizes all virtual packages!
+    # ... but their side effect also realizes all virtual packages!
     Yumrepo <| |> -> Package<| |>
 
 <!SLIDE >

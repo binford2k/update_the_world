@@ -34,10 +34,12 @@ iterations and improvements, it ported all valid functions flawlessly.
 ![Thumbs UP](/_images/thumbsup.gif)
 
 ~~~SECTION:notes~~~
-So then I ran it and went out for the night.
+So then I updated the script with a a couple more steps, then ran it and went
+out for the night.
 
 1. Instead of just cloning, now it forked too.
-1. After running, it submitted a PR with instructions on how to complete the job.
+1. It used the GitHub API to ignore forks and only fix upstream modules.
+1. After porting the function, it would submit a PR with instructions on how to complete the job.
 1. And then cleaned up by deleted the repo from my namespace.
 
 ~~~ENDSECTION~~~

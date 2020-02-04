@@ -11,6 +11,12 @@
     * New features.
     * Works better/faster/safer.
 
+~~~SECTION:notes~~~
+
+* Often upgrades offer nothing but the chance to make mistakes and break things!
+
+~~~ENDSECTION~~~
+
 
 <!SLIDE >
 # Motivation for change
@@ -23,7 +29,7 @@
     * Little control over this value.
 * Reward
     * The amount of reward we can offer in a new release is finite.
-    * It's never going to wash your car or do your laundry.
+    * Users want new exciting features, but without changing anything.
     * Ultimately, little control over this value either.
 
 ~~~SECTION:notes~~~
@@ -38,5 +44,7 @@
     * Often we pay for it in stability, which ends up as a detractor again.
     * And there are limits to what we can build in any given release cycle.
 
+.callout.warning Ultimately, this means that the differential between inertia
+and reward for a minor upgrade cycle is effectively fixed and pretty small.
 
 ~~~ENDSECTION~~~

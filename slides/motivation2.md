@@ -10,3 +10,10 @@
 * ... not really a lot ....
 
 .callout.meh When inertia and friction is greater than reward, we have stasis.
+
+~~~SECTION:notes~~~
+
+.callout.warning This means that new functions are often written to the new API,
+but very few people bother to upgrade their existing functions!
+
+~~~ENDSECTION~~~
